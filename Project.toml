@@ -1,0 +1,4 @@
+name = "DistMesh2D"
+uuid = "f35b52f9-dac7-460d-8eba-9271352c98c8"
+authors = ["jstarczewski <jan.a.starczewski@gmail.com>"]
+version = "0.1.0"
