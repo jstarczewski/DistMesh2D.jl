@@ -1,4 +1,3 @@
-
 include("../src/scaler.jl")
 
 bbox = [-1.0 -1.0; 1.0 1.0]
