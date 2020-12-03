@@ -2,7 +2,7 @@ function pointstoforces(
     edges::Array{GeometricalPredicates.Line2D{GeometricalPredicates.Point2D},1},
     scaler::Scaler,
     fscale::Float64,
-    /pfix,
+    pfix,
     fh::Function,
 )::Dict{Point2D,Array{Float64,1}}
     bars = Array{Point2D,1}()

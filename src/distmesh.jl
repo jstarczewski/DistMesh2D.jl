@@ -16,7 +16,7 @@ function distmesh2d(
     v1, v2 = extractbox(bbox, h0, calculateh1(h0))
     x, y = meshgrid(v1, v2)
     shiftevenrows!(x, h0)
-    p = buildinitialpoints(x,y,fd,scaler,geps)
+    p = buildinitialpoints(x, y, fd, fh,scaler, geps)
     pfix = [vcat(scaledpoint(row, scaler)) for row in eachrow(pfix)]
     pfix = transpose(reshape(vcat(pfix...), 2, length(pfix)))
     while true
@@ -40,6 +40,7 @@ function buildinitialpoints(
     x::Array{Float64, 2},
     y::Array{Float64, 2},
     fd::Function,
+    fh::Function,
     scaler::Scaler,
     geps::Float64
 )::Array{Float64, 2}
