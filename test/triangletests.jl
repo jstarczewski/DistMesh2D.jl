@@ -1,9 +1,3 @@
-using Test
-using DataFrames
-using Deldir
-using Gadfly
-using GeometricalPredicates
-
 include("../src/triangle.jl")
 
 
@@ -17,7 +11,6 @@ function plotexample()
     println(del)
     println("-----------------------------")
     println(sum)
-    Gadfly.plot(x = x, y = y, Geom.path, Coord.cartesian(fixed = true))
 end
 
 @testset "Proper generators are generated" begin
