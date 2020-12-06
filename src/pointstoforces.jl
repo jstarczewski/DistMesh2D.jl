@@ -35,7 +35,7 @@ function forcevectors(
     fh::Function,
 )
     L = [sqrt(sum(vsum .^ 2)) for vsum in barvec]
-    hbars = [fh(getx(p), gety(p)) for p in bars]
+    hbars = [fh([getx(p), gety(p)]) for p in bars]
     L0 = hbars * fscale * sqrt(sum(L .^ 2) / sum(hbars .^ 2))
     fvec = maximum.(L0 - L) ./ L .* barvec
 end

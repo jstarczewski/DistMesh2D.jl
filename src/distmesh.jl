@@ -4,10 +4,10 @@ function distmesh2d(
     bbox,
     h0::Float64,
     pfix = [],
+    dptol = 0.001,
     ttol = 0.1,
     geps = 0.001 * h0,
     Fscale = 1.2,
-    dptol = 0.001,
     deltat = 0.2,
     deps = sqrt(eps(Float64)) * h0,
 )::Tuple{Array{Float64, 1}, Array{Float64, 1}}
@@ -16,11 +16,19 @@ function distmesh2d(
     v1, v2 = extractbox(bbox, h0, calculateh1(h0))
     x, y = meshgrid(v1, v2)
     shiftevenrows!(x, h0)
-    p = buildinitialpoints(x, y, fd, fh,scaler, geps)
-    pfix = [vcat(scaledpoint(row, scaler)) for row in eachrow(pfix)]
+    p = buildinitialpoints(x, y, fd, fh, scaler, geps)
+    pfix = [vcat(scaledpoint(vcat(row), scaler)) for row in eachrow(pfix)]
     pfix = transpose(reshape(vcat(pfix...), 2, length(pfix)))
+    del = DataFrame()
+    vor = DataFrame()
+    summ = DataFrame()
     while true
-        del, vor, summ = deldir(p[:, 1], p[:, 2])
+        try
+            del, vor, summ = deldir(p[:, 1], p[:, 2])
+        catch e
+            error("Error in triangulation package occurred, last triangulates points = $p \n Error = ", e)
+            break
+        end
         trigs = triangles(del, summ)
         line_edges = validedges(trigs, del, scaler, fd, geps)
         pointstofvces = pointstoforces(line_edges, scaler, Fscale, pfix, fh)
@@ -46,7 +54,7 @@ function buildinitialpoints(
 )::Array{Float64, 2}
     p = [x[:] y[:]]
     p = [vcat(row) for row in eachrow(p) if fd(row) < -geps]
-    r0 = [1 ./ fh(row...) .^ 2 for row in p]
+    r0 = [1 ./ fh(row) .^ 2 for row in p]
     r0max = maximum(r0 ./ maximum(r0))
     p = [vcat(scaledpoint(row, scaler)) for row in p if (rand(Float64, size(p)))[1] < r0max]
     p = transpose(reshape(vcat(p...), 2, length(p)))
