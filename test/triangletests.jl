@@ -4,9 +4,9 @@ include("../src/triangle.jl")
 x = [0.2, 0.3, 0.4, 0.4, 0.5, 0.6]
 y = [0.0, 0.2, 0.0, 0.4, 0.2, 0.0]
 
-del, vor, sum = deldir(x, y)
 
 function plotexample()
+    del, vor, sum = deldir(x, y)
     x, y = edges(del)
     println(del)
     println("-----------------------------")
