@@ -29,7 +29,6 @@ function distmesh2d(
             iteration += 1
         catch e
             throw(TriangulationException(p, iteration, e))
-            break
         end
         trigs = triangles(del, summ)
         line_edges = validedges(trigs, del, scaler, fd, geps)

@@ -1,5 +1,3 @@
-include("src/distancefunctions.jl")
-
 @testset "dcircle rand values outside" begin
     randomvalues = rand(5,2)
     randomvaluespositive = randomvalues .+ 2
