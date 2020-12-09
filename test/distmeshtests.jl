@@ -1409,7 +1409,7 @@ end
     digs = 6
     bs = 2
     i = 0
-    
+
     while i < 10
         i += 1
         x, y = distmesh2d(fd, fh, [-1.0 -1.0; 1.0 1.0], 0.2)
