@@ -1425,3 +1425,8 @@ end
         @test expectedy == y
     end
 end
+
+
+@testset "Deldir error when triangulating" begin
+    @test_throws TriangulationException distmesh2d(fd, fh, [-0.0 -0.0; 1.0 1.0], 0.2)
+end
