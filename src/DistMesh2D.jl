@@ -9,8 +9,9 @@ include("triangle.jl")
 include("edges.jl")
 include("pointstoforces.jl")
 include("finalpoints.jl")
+include("triangulationexception.jl")
 include("distmesh.jl")
 
-export distmesh2d, drectangle, dcircle
+export distmesh2d, drectangle, dcircle, TriangulationException
 
 end

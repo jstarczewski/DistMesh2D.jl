@@ -22,11 +22,13 @@ function distmesh2d(
     del = DataFrame()
     vor = DataFrame()
     summ = DataFrame()
+    iteration = 0
     while true
         try
             del, vor, summ = deldir(p[:, 1], p[:, 2])
+            iteration += 1
         catch e
-            error("Error in triangulation package occurred, last triangulates points = $p \n Error = ", e)
+            throw(TriangulationException(p, iteration, e))
             break
         end
         trigs = triangles(del, summ)
