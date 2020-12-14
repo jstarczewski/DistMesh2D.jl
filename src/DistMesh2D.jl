@@ -12,6 +12,7 @@ include("finalpoints.jl")
 include("triangulationexception.jl")
 include("distmesh.jl")
 
-export distmesh2d, drectangle, dcircle, TriangulationException
+export distmesh2d, drectangle, dcircle, TriangulationException, ddiff, dunion,
+dintersect, huniform, protate
 
 end

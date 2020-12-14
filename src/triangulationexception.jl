@@ -6,5 +6,5 @@ end
 
 Base.showerror(io::IO, e::TriangulationException) = print(
      io,
-    "Triangulation failed with given data: \n Points = $(e.points) \n Iteration = $(e.iteration) \n Original triangulation library error = $(e.originalError)"
+    "Triangulation failed with given data: \n Points = $(e.points) \n Iteration = $(e.iteration) \n Inner error = $(e.originalError)"
 )

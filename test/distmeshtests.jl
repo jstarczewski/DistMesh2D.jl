@@ -1426,6 +1426,17 @@ end
     end
 end
 
+using Logging
+
+@testset "Generate unrelaxed mesh to check logging" begin
+    buf = IOBuffer()
+        with_logger(ConsoleLogger(buf)) do
+            x, y = distmesh2d(fd, fh, [-1.0 -1.0; 1.0 1.0], 0.2, dptol = 0.175, logmi = true)
+        end
+    logvalue = String(take!(buf))
+    println(logvalue[29:40])
+end
+
 function recfd(p)
     return drectangle(p, -20.0, 20.0, -20.0, 20.0)
 end
@@ -9110,7 +9121,7 @@ end
             fh,
             [-20.0 -20.0; 20.0 20.0],
             2.0,
-            [-20.0 -20.0; -20.0 20.0; 20.0 -20.0; 20.0 20.0],
+            pfix = [-20.0 -20.0; -20.0 20.0; 20.0 -20.0; 20.0 20.0],
         )
         expectedy = sort(filter(value -> !isnan(value), expectedy))
         expectedx = sort(filter(value -> !isnan(value), expectedx))
