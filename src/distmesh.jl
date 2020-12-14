@@ -2,7 +2,7 @@ function distmesh2d(
     fd::Function,
     fh::Function,
     bbox,
-    h0::Float64,
+    h0::Float64;
     pfix = [],
     dptol = 0.001,
     ttol = 0.1,
@@ -10,6 +10,7 @@ function distmesh2d(
     Fscale = 1.2,
     deltat = 0.2,
     deps = sqrt(eps(Float64)) * h0,
+    logmi = false
 )::Tuple{Array{Float64, 1}, Array{Float64, 1}}
     pold = Inf
     scaler = Scaler(bbox)
@@ -22,12 +23,14 @@ function distmesh2d(
     del = DataFrame()
     vor = DataFrame()
     summ = DataFrame()
+    iteration = 0
+    moveindexes = Array{Float64,1}()
     while true
         try
             del, vor, summ = deldir(p[:, 1], p[:, 2])
+            iteration += 1
         catch e
-            error("Error in triangulation package occurred, last triangulates points = $p \n Error = ", e)
-            break
+            throw(TriangulationException(p, iteration, e))
         end
         trigs = triangles(del, summ)
         line_edges = validedges(trigs, del, scaler, fd, geps)
@@ -38,6 +41,9 @@ function distmesh2d(
             x, y = plotedges(line_edges)
             break
         else
+            if logmi
+                saveiterationdata!(moveindexes, moveindex)
+            end
             p = finalp
         end
     end
@@ -77,4 +83,19 @@ end
 
 function shiftevenrows!(x::Array{Float64, 2}, h0::Float64)
     x[2:2:end, :] = x[2:2:end, :] .+ h0 / 2
+end
+
+function saveiterationdata!(
+    moveindexes::Array{Float64,1},
+    moveindex::Float64
+)
+    if !isempty(moveindexes)
+        minv = min(moveindexes...)
+        if moveindex < minv
+            push!(moveindexes, moveindex)
+            @info "Minimal move index is $moveindex"
+        end
+    else
+        push!(moveindexes, moveindex)
+    end
 end
