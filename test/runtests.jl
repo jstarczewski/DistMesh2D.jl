@@ -3,6 +3,7 @@ using DataFrames
 using Deldir
 using GeometricalPredicates
 using DistMesh2D
+using VoronoiDelaunay
 
 include("edgestests.jl")
 include("scalertests.jl")
