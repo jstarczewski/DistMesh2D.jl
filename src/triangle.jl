@@ -1,3 +1,14 @@
+# VoronoiDelaunay
+function triangles(tess::DelaunayTessellation2D)
+    trigs = Array{Array{Point2D,1},1}()
+    for t in tess
+        st = [geta(t), getb(t), getc(t)]
+        push!(trigs, st)
+    end
+    return trigs
+end
+
+# DelDir (troche bardziej złożony proces)
 function triangles(del::DataFrame, summ::DataFrame)
     generators = emptygenerators(summ)
     generatorstogenerated!(generators, del)

@@ -10,30 +10,32 @@ function distmesh2d(
     Fscale = 1.2,
     deltat = 0.2,
     deps = sqrt(eps(Float64)) * h0,
-    logmi = false
+    logmi = false,
+    engine = DD(bbox)
 )::Tuple{Array{Float64, 1}, Array{Float64, 1}}
     pold = Inf
-    scaler = Scaler(bbox)
+    scaler = engine.scaler
     v1, v2 = extractbox(bbox, h0, calculateh1(h0))
     x, y = meshgrid(v1, v2)
     shiftevenrows!(x, h0)
     p = buildinitialpoints(x, y, fd, fh, scaler, geps)
     pfix = [vcat(scaledpoint(vcat(row), scaler)) for row in eachrow(pfix)]
     pfix = transpose(reshape(vcat(pfix...), 2, length(pfix)))
-    del = DataFrame()
-    vor = DataFrame()
-    summ = DataFrame()
     iteration = 0
     moveindexes = Array{Float64,1}()
+    trigs = Array{Array{Point2D,1},1}()
+    line_edges = Array{GeometricalPredicates.Line2D{GeometricalPredicates.Point2D},1}()
+    pold = p .+ Inf
     while true
-        try
-            del, vor, summ = deldir(p[:, 1], p[:, 2])
-            iteration += 1
-        catch e
-            throw(TriangulationException(p, iteration, e))
+        if max(sqrt(sum((p - pold).^2))/h0)>ttol
+            pold = p
+            try
+                line_edges = engine.edges(p, iteration, fd, scaler, geps)
+                iteration += 1
+            catch e
+                throw(TriangulationException(p, iteration, e))
+            end
         end
-        trigs = triangles(del, summ)
-        line_edges = validedges(trigs, del, scaler, fd, geps)
         pointstofvces = pointstoforces(line_edges, scaler, Fscale, pfix, fh)
         finalp, moveindex =
             finalpositions(pointstofvces, scaler, deltat, fd, geps, deps, h0)
