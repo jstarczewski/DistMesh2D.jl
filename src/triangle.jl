@@ -8,10 +8,9 @@ function triangles(tess::DelaunayTessellation2D)
     return trigs
 end
 
-# DelDir (troche bardziej złożony proces)
 function triangles(del::DataFrame, summ::DataFrame)
     generators = emptygenerators(summ)
-    generatorstogenerated!(generators, del)
+    fillgenerators!(generators, del)
     indextriangles = buildindextriangles(generators)
     return buildvaluetriangles(indextriangles, summ)
 end
@@ -24,10 +23,13 @@ function emptygenerators(summ::DataFrame)::Dict{Int64,Array{Int,1}}
     return generators
 end
 
-function generatorstogenerated!(generators::Dict{Int64,Array{Int,1}}, del::DataFrame)
+function fillgenerators!(
+    gen::Dict{Int64,Array{Int,1}},
+    del::DataFrame
+)
     for row in eachrow(del)
-        generators[row[5]] = append!(generators[row[5]], row[6])
-        generators[row[6]] = append!(generators[row[6]], row[5])
+        gen[row[5]] = append!(gen[row[5]], row[6])
+        gen[row[6]] = append!(gen[row[6]], row[5])
     end
 end
 

@@ -3,9 +3,16 @@ struct Scaler
     transx::Float64
     transy::Float64
 
-    function Scaler(bbox::Array{Float64, 2}; basetrans::Float64 = 0.0)
+    function Scaler(
+        bbox::Array{Float64, 2};
+        basetrans::Float64 = 0.0
+    )
         _scale = (abs(1 / (bbox[2] - bbox[1])))
-        new(_scale, (basetrans - bbox[1] * _scale), (basetrans - bbox[1, 2] * _scale))
+        new(
+            _scale,
+            (basetrans - bbox[1] * _scale),
+            (basetrans - bbox[1, 2] * _scale)
+         )
     end
 end
 

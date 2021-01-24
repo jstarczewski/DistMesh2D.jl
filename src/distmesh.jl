@@ -27,7 +27,7 @@ function distmesh2d(
     line_edges = Array{GeometricalPredicates.Line2D{GeometricalPredicates.Point2D},1}()
     pold = p .+ Inf
     while true
-        if max(sqrt(sum((p - pold).^2))/h0)>ttol
+        if !isempty(pfix) || max(sqrt(sum((p - pold).^2))/h0)>ttol
             pold = p
             try
                 line_edges = engine.edges(p, iteration, fd, scaler, geps)
@@ -40,7 +40,7 @@ function distmesh2d(
         finalp, moveindex =
             finalpositions(pointstofvces, scaler, deltat, fd, geps, deps, h0)
         if moveindex < dptol
-            x, y = plotedges(line_edges)
+            x, y = xy(line_edges)
             break
         else
             if logmi

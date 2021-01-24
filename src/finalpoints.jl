@@ -53,7 +53,7 @@ function buildfinalpoints(
         end
     end
     finalp = map(p -> scaledpoint([p[1], p[2]], scaler), unique(finalp))
-    finalp = transpose(reshape(vcat(finalp...), 2, length(finalp)))
+    finalp = permutedims(reshape(vcat(finalp...), 2, length(finalp)))
 end
 
 function moveindex(

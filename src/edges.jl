@@ -39,27 +39,6 @@ function vectorizededges(triangle::Array{Point2D,1})::Array{Array{Float64,2},1}
     return [ab, ba, bc, cb, ac, ca]
 end
 
-function validedges(
-    triangles::Array{Array{Point2D,1},1},
-    tess::DelaunayTessellation2D,
-    scaler::Scaler,
-    fd::Function,
-    geps::Float64,
-)::Array{GeometricalPredicates.Line2D{GeometricalPredicates.Point2D},1}
-    inedges = Array{Array{Float64,2},1}()
-    outedges = Array{Array{Float64,2},1}()
-    for triangle in triangles
-        center = unscaledcenterpoint(triangle, scaler)
-        edges = vectorizededges(triangle)
-        if fd([getx(center), gety(center)]) > -geps
-            push!(inedges, edges...)
-        else
-            push!(outedges, edges...)
-        end
-    end
-    return buildedges(inedges, outedges, tess)
-end
-
 function buildedges(
     inedges::Array{Array{Float64,2},1},
     outedges::Array{Array{Float64,2},1},

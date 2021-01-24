@@ -14,6 +14,6 @@ include("engine.jl")
 include("distmesh.jl")
 
 export distmesh2d, drectangle, dcircle, TriangulationException, ddiff, dunion,
-dintersect, huniform, protate, dd, vd, VD, DD
+dintersect, huniform, protate, VD, DD, plottable
 
 end

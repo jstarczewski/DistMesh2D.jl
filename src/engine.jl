@@ -41,7 +41,7 @@ function vd(
     geps::Float64
 )::Array{GeometricalPredicates.Line2D{GeometricalPredicates.Point2D},1}
     tess = DelaunayTessellation()
-    p = [Point2D(pp[1], pp[2]) for pp in eachrow(p)]
+    p = [Point2D(point[1], point[2]) for point in eachrow(p)]
     push!(tess, p)
     trigs = triangles(tess)
     edges = Array{GeometricalPredicates.Line2D{GeometricalPredicates.Point2D},1}()
