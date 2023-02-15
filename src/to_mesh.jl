@@ -1,20 +1,23 @@
 """
     to_graph(x,y)
-Assumes that `x,y` are of the form [a,b,NaN,c,d,NaN,....], representing line segments
+Assumes that `x,y` are of the form [a,b,NaN,c,d,NaN,....], representing line segments.
+Create an adjacency matrix representing the graph of the mesh from the line segments,
+and all the vertices
 """
 function to_graph(x,y)
-    Z = [x y]
-    Z_pts = Vector{Tuple{Float64,Float64}}(undef, 2size(Z,1)÷3)
-    for j in 1:size(Z,1)÷3
-        Z_pts[2j-1] = (Z[3j-2,1],Z[3j-2,2])
-        Z_pts[2j] = (Z[3j-1,1],Z[3j-1,1])
+    Z_pts = Vector{Tuple{Float64,Float64}}(undef, 2length(x)÷3)
+    idx = 1
+    @inbounds for j in eachindex(x)
+        if j % 3 > 0
+            Z_pts[idx] = (x[j],y[j])
+            idx += 1
+        end
     end
-    Z_pts = [(z[1],z[2]) for z in eachrow(Z[Not(3:3:end),:])]
     verts = unique(Z_pts)
     g=[Int[] for _ in eachindex(verts)]
     N_edges = size(Z_pts,1)÷2
     edges = Vector{Tuple{Int,Int}}(undef, N_edges)
-    for j in eachindex(edges)
+    @inbounds for j in eachindex(edges)
         z1,z2 = Z_pts[[2j-1,2j]]
         z1_v = findfirst(==(z1), verts)
         z2_v = findfirst(==(z2), verts)
@@ -24,7 +27,11 @@ function to_graph(x,y)
     verts, g
 end
 
-function sort3(a,b,c)
+"""
+    sort3(a::T,b::T,c::T)
+returns a NTuple{3,T} that gives (a,b,c) from smallest to largest
+"""
+function sort3(a::T,b::T,c::T)::NTuple{3,T} where {T}
     t = a
     if a>b
         a = b
@@ -43,7 +50,11 @@ function sort3(a,b,c)
     a,b,c
 end
 
-function counterclockwise(v1::Int,v2::Int,v3::Int, verts)
+"""
+    counterclockwise(v1::Int,v2::Int,v3::Int, verts::Vector{Tuple{T,T}})
+Sorts the indices in ascending order then swaps first two to ensure counterclockwise
+"""
+function counterclockwise(v1::Int,v2::Int,v3::Int, verts::Vector{Tuple{T,T}}) where {T}
     v1,v2,v3 = sort3(v1,v2,v3)
     ax,ay = verts[v1]
     bx,by = verts[v2]
@@ -53,9 +64,15 @@ function counterclockwise(v1::Int,v2::Int,v3::Int, verts)
     is_cc ? (v1,v2,v3) : (v2,v1,v3)
 end
 
-function tris_from_graph(g::Vector{Vector{Int}}, verts)
-    tris = NTuple{3,Int}[]
-    for v in eachindex(g)
+"""
+    tris_from_graph(g::Vector{Vector{Int}}, verts::Vector{Tuple{T,T}})
+Takes a graph representation of a mesh (represented by a sparse adjacency matrix) and finds all the triangles.
+Scales poorly with the number of edges.
+"""
+function tris_from_graph(g::Vector{Vector{Int}}, verts::Vector{Tuple{T,T}}) where {T}
+    tris = Set{NTuple{3,Int}}()
+    sizehint!(tris, 2length(verts))
+    @inbounds for v in eachindex(g)
         for v1 in g[v]
             for v2 in g[v1]
                 for v3 in g[v2]
@@ -82,6 +99,6 @@ function to_mesh(x,y)
     verts, g = to_graph(x,y)
     tris = tris_from_graph(g,verts)
     p = reduce(vcat, [v[1] v[2]] for v in verts)
-    t = reduce(vcat, [t[1] t[2] t[3]] for t in unique(tris))
+    t = reduce(vcat, [t[1] t[2] t[3]] for t in tris)
     p,t
 end
