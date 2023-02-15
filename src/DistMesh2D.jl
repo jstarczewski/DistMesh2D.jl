@@ -11,8 +11,9 @@ include("pointstoforces.jl")
 include("finalpoints.jl")
 include("triangulationexception.jl")
 include("distmesh.jl")
+include("to_mesh.jl")
 
 export distmesh2d, drectangle, dcircle, TriangulationException, ddiff, dunion,
-dintersect, huniform, protate
+dintersect, huniform, protate, to_mesh
 
 end
