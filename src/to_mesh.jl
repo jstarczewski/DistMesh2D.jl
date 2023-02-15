@@ -91,9 +91,10 @@ end
     to_mesh(x,y)
 Given line segments with coordinates in x,y of form [x1,x2,NaN,x3,x4,NaN,...] and similar for y,
 construct a mesh using vertices and a conductivity matrix.
+
 Returns:
-`p`: matrix where each row is a point on the mesh
-`t`: matrix where each row gives a triangle via the indices of rows of p representing the 3 points
+- `p`: matrix where each row is a point on the mesh
+- `t`: matrix where each row gives a triangle via the indices of rows of p representing the 3 points
 """
 function to_mesh(x,y)
     verts, g = to_graph(x,y)
